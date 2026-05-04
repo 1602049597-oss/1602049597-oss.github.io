@@ -877,8 +877,9 @@
 <div class="meihua-container" id="meihua-container" style="display: none;">
     <!-- 卦象展示区域 - 三层名称结构：类型标签→64卦名→八卦名 -->
 <div class="gua-container">
-    <div class="ti-yong ti">体</div>
-    <div class="ti-yong yong">用</div>
+    <div class="ti-yong ti"></div>
+<div class="ti-yong yong"></div>
+
     <!-- 本卦 -->
     <div class="gua-item ben-gua" data-gua="ben">
         <div class="gua-name">
@@ -935,7 +936,6 @@
         <div class="guaci-panel hidden" id="dynamic-panel"></div>
     </div>
 </div>
-
             <!-- 鬼谷子/一掌经容器 -->
             <div class="guigu-yizhang-container" id="guigu-yizhang-container" style="display: none;">
                 <div class="palace-scroll" id="palace-scroll"></div>
@@ -4543,6 +4543,25 @@ els.guaCiContent.innerText = currentDesc;
 
 // 梅花易数卦象渲染核心函数（正统规则修复版：体用唯本卦定）
 function renderMeihuaStyle(meihuaResult) {
+
+    // ======================
+   // 🔥 100% 修正版：严格匹配梅花易数“动为用，静为体”规则
+const changeYao = meihuaResult.change;
+const tiElement = document.querySelector('.ti-yong.ti');  // 上位置（top:82px）
+const yongElement = document.querySelector('.ti-yong.yong');// 下位置（top:118px）
+
+if (tiElement && yongElement) {
+    if (changeYao >= 4) {
+        // 4-6爻动 = 上卦动 → 上卦为用，下卦为体
+        tiElement.textContent = "用";   // 上位置标“用”
+        yongElement.textContent = "体"; // 下位置标“体”
+    } else {
+        // 1-3爻动 = 下卦动 → 下卦为用，上卦为体
+        tiElement.textContent = "体";   // 上位置标“体”
+        yongElement.textContent = "用"; // 下位置标“用”
+    }
+}
+
     // 1. 卦象数据映射（保留原有正确逻辑）
     const guaDataMap = {
         ben: {
@@ -4767,63 +4786,77 @@ function renderMeihuaStyle(meihuaResult) {
             if(guaTitle) guaTitle.textContent = guaNameMap[guaType] || '卦象详解';
             
             // 渲染详情内容（核心：所有五行都以本卦体为基准）
-            if(dynamicPanel) {
-                let tiYongHtml = '';
-                switch (guaType) {
-                    case 'ben':
-                        tiYongHtml = `<p><span class="label">五行</span>：体${benTi.name}${benTi.wuxing} 用${benYong.name}${benYong.wuxing} <span class="sk">${getShengKeRelation(benTi.wuxing, benYong.wuxing)}</span></p>`;
-                        break;
-                    case 'hu':
-                        tiYongHtml = `<p><span class="label">五行</span>：体${benTi.name}${benTi.wuxing}（互上${meihuaResult.huGua.upper.name}${meihuaResult.huGua.upper.wuxing} 互下${meihuaResult.huGua.lower.name}${meihuaResult.huGua.lower.wuxing}）</p>`;
-                        break;
-                    case 'bian':
-                        tiYongHtml = `<p><span class="label">五行</span>：体${benTi.name}${benTi.wuxing}（变上${meihuaResult.bianGua.upper.name}${meihuaResult.bianGua.upper.wuxing} 变下${meihuaResult.bianGua.lower.name}${meihuaResult.bianGua.lower.wuxing}）</p>`;
-                        break;
-                    case 'cuo':
-                        tiYongHtml = `<p><span class="label">五行</span>：体${benTi.name}${benTi.wuxing}（错卦为阴阳反象，不判生克）</p>`;
-                        break;
-                    case 'zong':
-                        tiYongHtml = `<p><span class="label">五行</span>：体${benTi.name}${benTi.wuxing}（综卦为局势反转，不判生克）</p>`;
-                        break;
-                }
+if(dynamicPanel) {
+    let tiYongHtml = '';
+    switch (guaType) {
+        case 'ben':
+            tiYongHtml = `<p><span class="label">五行</span>：体${benTi.name}${benTi.wuxing} 用${benYong.name}${benYong.wuxing} <span class="sk">${getShengKeRelation(benTi.wuxing, benYong.wuxing)}</span></p>`;
+            break;
+        case 'hu':
+            tiYongHtml = `<p><span class="label">五行</span>：体${benTi.name}${benTi.wuxing}（互上${meihuaResult.huGua.upper.name}${meihuaResult.huGua.upper.wuxing} 互下${meihuaResult.huGua.lower.name}${meihuaResult.huGua.lower.wuxing}）</p>`;
+            break;
+        case 'bian':
+            tiYongHtml = `<p><span class="label">五行</span>：体${benTi.name}${benTi.wuxing}（变上${meihuaResult.bianGua.upper.name}${meihuaResult.bianGua.upper.wuxing} 变下${meihuaResult.bianGua.lower.name}${meihuaResult.bianGua.lower.wuxing}）</p>`;
+            break;
+        case 'cuo':
+            tiYongHtml = `<p><span class="label">五行</span>：体${benTi.name}${benTi.wuxing}（错卦为阴阳反象，不判生克）</p>`;
+            break;
+        case 'zong':
+            tiYongHtml = `<p><span class="label">五行</span>：体${benTi.name}${benTi.wuxing}（综卦为局势反转，不判生克）</p>`;
+            break;
+    }
 
-                dynamicPanel.innerHTML = `
-                    <div class="traditional">
-                        <p><span class="label">卦名</span>：${currentGuaDetail.name || currentGuaName} <span class="jx">${currentGuaDetail.type || '中上卦'}</span></p>
-                        <p><span class="label">卦性</span>：${currentGuaDetail.guaXing || '未知卦性'}（${currentGuaDetail.palace || '未知宫位'}）</p>
-                        ${tiYongHtml}
-                        <p><span class="label">原卦辞</span>：${currentGuaDetail.guaciOriginal || '暂无原卦辞'}</p>
-                        <p><span class="label">变爻</span>：第${meihuaResult.change}爻 ${currentGuaDetail.yaoCi?.[meihuaResult.change - 1]?.yao || '无变爻'} ${currentGuaDetail.yaoCi?.[meihuaResult.change - 1]?.xiangYue || ''}</p>
-                    </div>
-                    <h4>一、现代卦辞解读</h4>
-                    <p>${currentGuaDetail.guaciModern || '暂无现代解读'}</p>
-                    <h4>二、变爻详解</h4>
-                    <p>${currentGuaDetail.yaoCi?.[meihuaResult.change - 1]?.modern || '暂无变爻解读'}</p>
-                    <p>${currentGuaDetail.yaoCi?.[meihuaResult.change - 1]?.scene || '暂无实战映射'}</p>
-                    <h4>三、事占实战</h4>
-                    <p><span class="label">事业</span>：${currentGuaDetail.shiZhan?.事业 || '暂无事业解读'}</p>
-                    <p><span class="label">感情</span>：${currentGuaDetail.shiZhan?.感情 || '暂无感情解读'}</p>
-                    <p><span class="label">财运</span>：${currentGuaDetail.shiZhan?.财运 || '暂无财运解读'}</p>
-                    <p><span class="label">健康</span>：${currentGuaDetail.shiZhan?.健康 || '暂无健康解读'}</p>
-                    <p class="footer-tip">断语结合体用生克，仅供参考，需适配具体问事场景</p>
-                `;
-            }
-            
-            // 平滑滚动
-            const explanationEl = document.querySelector('.explanation');
-            if(explanationEl) explanationEl.scrollIntoView({behavior: 'smooth', block: 'start'});
+    dynamicPanel.innerHTML = `
+        <div class="traditional">
+            <p><span class="label">卦名</span>：${currentGuaDetail.name || currentGuaName} <span class="jx">${currentGuaDetail.type || '中上卦'}</span></p>
+            <p><span class="label">卦性</span>：${currentGuaDetail.guaXing || '未知卦性'}（${currentGuaDetail.palace || '未知宫位'}）</p>
+            ${tiYongHtml}
+            <p><span class="label">原卦辞</span>：${currentGuaDetail.guaciOriginal || '暂无原卦辞'}</p>
+            <p><span class="label">变爻</span>：第${meihuaResult.change}爻 ${currentGuaDetail.yaoCi?.[meihuaResult.change - 1]?.yao || '无变爻'} ${currentGuaDetail.yaoCi?.[meihuaResult.change - 1]?.xiangYue || ''}</p>
+        </div>
+        <h4>一、现代卦辞解读</h4>
+        <p>${currentGuaDetail.guaciModern || '暂无现代解读'}</p>
+        <h4>二、变爻详解</h4>
+        <p>${currentGuaDetail.yaoCi?.[meihuaResult.change - 1]?.modern || '暂无变爻解读'}</p>
+        <p>${currentGuaDetail.yaoCi?.[meihuaResult.change - 1]?.scene || '暂无实战映射'}</p>
+        <h4>三、事占实战</h4>
+        <p><span class="label">事业</span>：${currentGuaDetail.shiZhan?.事业 || '暂无事业解读'}</p>
+        <p><span class="label">感情</span>：${currentGuaDetail.shiZhan?.感情 || '暂无感情解读'}</p>
+        <p><span class="label">财运</span>：${currentGuaDetail.shiZhan?.财运 || '暂无财运解读'}</p>
+        <p><span class="label">健康</span>：${currentGuaDetail.shiZhan?.健康 || '暂无健康解读'}</p>
+        <p class="footer-tip">断语结合体用生克，仅供参考，需适配具体问事场景</p>
+    `;
+
+    // ======================
+    // 🔥 新增：同步更新下方第二段解读（点击什么卦，下面就跟着变）
+    // ======================
+    const guaCiContent = document.getElementById('gua-ci-content');
+    if (guaCiContent && guaExplainMap[guaType]) {
+        guaCiContent.innerHTML = guaExplainMap[guaType];
+    }
+}
+
+// 平滑滚动
+const explanationEl = document.querySelector('.explanation');
+if(explanationEl) explanationEl.scrollIntoView({behavior: 'smooth', block: 'start'});
         });
     });
 
-    // 7. 全局复位函数（保留原有逻辑）
     window.resetPanel = function() {
-        document.querySelectorAll('.gua-item').forEach(ele => ele.classList.remove('active'));
-        if(defaultPanel) defaultPanel.classList.remove('hidden');
-        if(dynamicPanel) dynamicPanel.classList.add('hidden');
-        if(guaTitle) guaTitle.textContent = '点击卦身查看核心解读';
-        const explanationEl = document.querySelector('.explanation');
-        if(explanationEl) explanationEl.scrollIntoView({behavior: 'smooth', block: 'start'});
+    document.querySelectorAll('.gua-item').forEach(ele => ele.classList.remove('active'));
+    if(defaultPanel) defaultPanel.classList.remove('hidden');
+    if(dynamicPanel) dynamicPanel.classList.add('hidden');
+    if(guaTitle) guaTitle.textContent = '点击卦身查看核心解读';
+    
+    // 复位时，第二段也切回本卦
+    const guaCiContent = document.getElementById('gua-ci-content');
+    if (guaCiContent) {
+        guaCiContent.innerHTML = guaExplainMap.ben;
     }
+
+    const explanationEl = document.querySelector('.explanation');
+    if(explanationEl) explanationEl.scrollIntoView({behavior: 'smooth', block: 'start'});
+}
 
     // 8. 通用宫位详解容器绑定（保留原有逻辑）
     const gongweiContainer = document.getElementById('gua-ci-container');
@@ -4834,7 +4867,6 @@ function renderMeihuaStyle(meihuaResult) {
         gongweiContent.innerHTML = guaExplainMap.ben;
     }
 }
-
 // 以下辅助函数均保留原有正确逻辑，无需修改
 function getShengKeRelation(tiWuXing, yongWuXing) {
     const shengMap = {木: '火',火: '土',土: '金',金: '水',水: '木'};
@@ -6005,14 +6037,23 @@ els.reportRelations.innerText = relationDesc;
 } 
 // 梅花易数模式
 else if (mode === 'meihua') {
-const upper = result.upper;
-const lower = result.lower;
-const relation = ['木火', '火土', '土金', '金水', '水木'].includes(lower.wuxing + upper.wuxing) ? '相生' : '相克';
+    const upper = result.upper;
+    const lower = result.lower;
+    const changeYao = result.change;
 
-els.reportYongshen.innerText = `${upper.name}卦(${upper.id})`;
-els.reportWangshuai.innerText = `平 (中和)`;
-els.reportRelations.innerText = `${lower.name}(${lower.wuxing})与${upper.name}(${upper.wuxing})${relation}`;
-els.reportDuanyu.innerText = `本卦为${lower.name}${upper.name}卦，变爻${result.change}。${lower.name}为体，${upper.name}为用，体用${relation === '相生' ? '相生，事成有望' : '相克，阻力重重'}。问${question}之事，需${relation === '相生' ? '顺势而为' : '谨慎谋划'}。`;
+    // ✅ 核心修复：动爻定体用（正统梅花规则）
+    const isUpperDong = changeYao >= 4;
+    const tiGua = isUpperDong ? lower : upper;
+    const yongGua = isUpperDong ? upper : lower;
+
+    const relation = ['木火', '火土', '土金', '金水', '水木'].includes(lower.wuxing + upper.wuxing) ? '相生' : '相克';
+
+    els.reportYongshen.innerText = `${upper.name}卦(${upper.id})`;
+    els.reportWangshuai.innerText = `平 (中和)`;
+    els.reportRelations.innerText = `${lower.name}(${lower.wuxing})与${upper.name}(${upper.wuxing})${relation}`;
+    
+    // ✅ 修复断语：动态显示正确体用
+    els.reportDuanyu.innerText = `本卦为${lower.name}${upper.name}卦，变爻${changeYao}。${tiGua.name}为体，${yongGua.name}为用，体用${relation === '相生' ? '相生，事成有望' : '相克，阻力重重'}。问${question}之事，需${relation === '相生' ? '顺势而为' : '谨慎谋划'}。`;
 }
 };
 
