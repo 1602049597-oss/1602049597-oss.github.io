@@ -639,22 +639,6 @@
             color: #999;
         }
 
-/* 修复：电脑端 全选/删除 底部栏居中对齐，手机端保持正常 */
-@media (min-width: 768px) {
-  #delete-bar, .delete-bar {
-    position: fixed !important;
-    bottom: 0 !important;
-    left: 50% !important;
-    transform: translateX(-50%) !important;
-    max-width: 450px !important;
-    width: 100% !important;
-    box-sizing: border-box !important;
-    /* 补全背景，避免电脑端透明漏字 */
-    background: #fff !important;
-    border-top: 1px solid #eee !important;
-  }
-}
-
         /* 新布局样式（直接粘贴） */
 .core-branch{margin:15px 0;}
 .core-branch h3{font-size:16px;color:#333;margin:0 0 10px;font-weight:500;}
