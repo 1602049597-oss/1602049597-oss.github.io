@@ -329,6 +329,82 @@
     background-color: #f5f5f5;
 }
 
+/* ========== 按钮最终版：蓝灰配色 ========== */
+.result-btn-box,
+.result-btn-box *,
+.result-btn,
+.result-btn * {
+  margin: 0 !important;
+  padding: 0 !important;
+  box-sizing: border-box !important;
+}
+
+.result-btn-box {
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  gap: 12px !important;
+  padding: 0 16px !important;
+  margin: 24px 0 !important;
+  width: 100% !important;
+  max-width: 100vw !important;
+  position: relative !important;
+  z-index: 9999 !important;
+}
+
+.result-btn {
+  flex: 1 !important;
+  flex-shrink: 0 !important;
+  min-width: max-content !important;
+  padding: 16px 24px !important;
+  font-size: 16px !important;
+  font-weight: 600 !important;
+  line-height: 1 !important;
+  border: none !important;
+  border-radius: 50px !important;
+  cursor: pointer !important;
+  white-space: nowrap !important;
+  overflow: visible !important;
+  text-overflow: unset !important;
+  transition: all 0.2s ease !important;
+}
+
+/* 重新排盘：浅灰蓝（次要按钮） */
+.result-btn:first-child {
+  background: #f0f5f9 !important;
+  color: #4a6583 !important;
+}
+
+/* 查看分析：深青蓝（主按钮） */
+.result-btn:last-child {
+  background: linear-gradient(135deg, #2d5073 0%, #1a365d 100%) !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 15px rgba(45, 80, 115, 0.4) !important;
+}
+
+/* 交互效果 */
+.result-btn:first-child:hover {
+  background: #d9e6f2 !important;
+  transform: translateY(-1px) !important;
+}
+.result-btn:last-child:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 6px 20px rgba(45, 80, 115, 0.5) !important;
+}
+.result-btn:active {
+  transform: translateY(0) !important;
+}
+
+/* 手机端适配 */
+@media (max-width: 767px) {
+  .result-btn-box {
+    padding: 0 12px !important;
+    gap: 10px !important;
+  }
+  .result-btn {
+    padding: 16px 12px !important;
+    font-size: 15px !important;
+  }
+}
 
       /* 梅花易数容器基础样式（外部白色框，保留） */
 .meihua-container {
@@ -756,6 +832,85 @@
             background-color: #ff4444; color: #fff; border: none;
             padding: 8px 15px; border-radius: 6px; cursor: pointer; font-size: 14px;
         }
+
+/* 搜索那一行 */
+.record-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 16px 16px;
+    gap: 12px;
+    box-sizing: border-box;
+}
+
+/* 搜索框：改小一点 */
+.search-container {
+    flex: 1;
+    max-width: 65%;
+    position: relative;
+}
+
+.record-search {
+    width: 100%;
+    padding: 0 40px 0 16px;
+    height: 44px;
+    line-height: 44px;
+    border: 1px solid #e5e7eb;
+    border-radius: 24px;
+    font-size: 16px;
+    outline: none;
+    box-sizing: border-box;
+}
+
+/* 管理 / 取消按钮：改大一点 */
+.result-btn {
+    flex: 0 0 auto;
+    width: 100px;      /* 变宽 */
+    height: 44px;
+    line-height: 44px;
+    text-align: center;
+    border: 1px solid #e5e7eb;
+    border-radius: 24px;
+    background: white;
+    font-size: 16px;
+    cursor: pointer;
+    box-sizing: border-box;
+}
+
+/* 通用基础样式（手机、电脑共用） */
+.delete-bar {
+  position: fixed;
+  bottom: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background: #ffffff;
+  z-index: 999;
+  box-sizing: border-box;
+  box-shadow: 0 -2px 8px rgba(0,0,0,0.05);
+}
+
+/* 👇 电脑端（屏幕宽度 ≥ 768px）：居中显示 */
+@media (min-width: 768px) {
+  .delete-bar {
+    left: 50%;
+    transform: translateX(-50%);
+    width: 720px; /* 电脑端最大宽度，可自行调整 */
+    border-radius: 12px 12px 0 0; /* 顶部圆角，更美观 */
+  }
+}
+
+/* 👇 手机端（屏幕宽度 < 768px）：保留你原来的左偏样式 */
+@media (max-width: 767px) {
+  .delete-bar {
+    left: 8px; /* 你原来的左偏8px */
+    right: 8px; /* 右边也加8px，左右对称更好看 */
+    /* 适配iPhone等手机的底部小黑条，避免内容被挡住 */
+    padding-bottom: calc(12px + env(safe-area-inset-bottom));
+  }
+}
+
     </style>
 </head>
 <body>
@@ -1544,6 +1699,17 @@ bagua: [
 }
         };
 
+// 上下八卦 → 正统六十四卦名映射表（修复拼接名不匹配问题）
+const upperLowerTo64Gua = {
+  "乾乾":"乾为天","乾兑":"天泽履","乾离":"天火同人","乾震":"天雷无妄","乾巽":"天风姤","乾坎":"天水讼","乾艮":"天山遁","乾坤":"天地否",
+  "兑乾":"泽天夬","兑兑":"兑为泽","兑离":"泽火革","兑震":"泽雷随","兑巽":"泽风大过","兑坎":"泽水困","兑艮":"泽山咸","兑坤":"泽地萃",
+  "离乾":"火天大有","离兑":"火泽睽","离离":"离为火","离震":"火雷噬嗑","离巽":"火风鼎","离坎":"火水未济","离艮":"火山旅","离坤":"火地晋",
+  "震乾":"雷天大壮","震兑":"雷泽归妹","震离":"雷火丰","震震":"震为雷","震巽":"雷风恒","震坎":"雷水解","震艮":"雷山小过","震坤":"雷地豫",
+  "巽乾":"风天小畜","巽兑":"风泽中孚","巽离":"风火家人","巽震":"风雷益","巽巽":"巽为风","巽坎":"风水涣","巽艮":"风山渐","巽坤":"风地观",
+  "坎乾":"水天需","坎兑":"水泽节","坎离":"水火既济","坎震":"水雷屯","坎巽":"水风井","坎坎":"坎为水","坎艮":"水山蹇","坎坤":"水地比",
+  "艮乾":"山天大畜","艮兑":"山泽损","艮离":"山火贲","艮震":"山雷颐","艮巽":"山风蛊","艮坎":"山水蒙","艮艮":"艮为山","艮坤":"山地剥",
+  "坤乾":"地天泰","坤兑":"地泽临","坤离":"地火明夷","坤震":"地雷复","坤巽":"地风升","坤坎":"地水师","坤艮":"地山谦","坤坤":"坤为地"
+};
   // 梅花易数六十四卦完整映射表（上卦为体，下卦为用，含现代文全解读，可直接导入使用）
 const plumBlossom64Gua = {
   // 一、乾宫八卦（属金，体卦：乾金☰）
@@ -4552,7 +4718,6 @@ els.guaCiContent.innerText = currentDesc;
 // 梅花易数卦象渲染核心函数（正统规则修复版：体用唯本卦定）
 function renderMeihuaStyle(meihuaResult) {
 
-    // ======================
    // 🔥 100% 修正版：严格匹配梅花易数“动为用，静为体”规则
 const changeYao = meihuaResult.change;
 const tiElement = document.querySelector('.ti-yong.ti');  // 上位置（top:82px）
@@ -4570,84 +4735,89 @@ if (tiElement && yongElement) {
     }
 }
 
-    // 1. 卦象数据映射（保留原有正确逻辑）
-    const guaDataMap = {
-        ben: {
-            name: meihuaResult.benGua.name,
-            baguaName: `${meihuaResult.benGua.upper.name}${meihuaResult.benGua.lower.name}`,
-            sixYao: meihuaResult.benGua.sixYao,
-            changeYao: meihuaResult.change
-        },
-        hu: {
-            name: meihuaResult.huGua.name,
-            baguaName: `${meihuaResult.huGua.upper.name}${meihuaResult.huGua.lower.name}`,
-            sixYao: meihuaResult.huGua.sixYao
-        },
-        bian: {
-            name: meihuaResult.bianGua.name,
-            baguaName: `${meihuaResult.bianGua.upper.name}${meihuaResult.bianGua.lower.name}`,
-            sixYao: meihuaResult.bianGua.sixYao
-        },
-        cuo: {
-            name: meihuaResult.cuoGua.name,
-            baguaName: `${meihuaResult.cuoGua.upper.name}${meihuaResult.cuoGua.lower.name}`,
-            sixYao: meihuaResult.cuoGua.sixYao
-        },
-        zong: {
-            name: meihuaResult.zongGua.name,
-            baguaName: `${meihuaResult.zongGua.upper.name}${meihuaResult.zongGua.lower.name}`,
-            sixYao: meihuaResult.zongGua.sixYao
-        }
-    };
+    // 1. 卦象数据映射（修复版：自动转正统六十四卦名）
+const benCombine = `${meihuaResult.benGua.upper.name}${meihuaResult.benGua.lower.name}`;
+const huCombine = `${meihuaResult.huGua.upper.name}${meihuaResult.huGua.lower.name}`;
+const bianCombine = `${meihuaResult.bianGua.upper.name}${meihuaResult.bianGua.lower.name}`;
+const cuoCombine = `${meihuaResult.cuoGua.upper.name}${meihuaResult.cuoGua.lower.name}`;
+const zongCombine = `${meihuaResult.zongGua.upper.name}${meihuaResult.zongGua.lower.name}`;
 
-    // ========== 核心重构：体用唯本卦定（删除错误的各卦自定体用） ==========
-    const benTi = meihuaResult.tiGua; // 本卦体（所有卦的唯一体基准）
-    const benYong = meihuaResult.yongGua; // 本卦用（仅本卦专属）
-    const guaTiYongMap = {
-        ben: {
-            ti: benTi,
-            yong: benYong,
-            tiWuXing: benTi.wuxing,
-            yongWuXing: benYong.wuxing
-        },
-        hu: {
-            ti: benTi, // 继承本卦体
-            upper: meihuaResult.huGua.upper, // 互卦上卦
-            lower: meihuaResult.huGua.lower, // 互卦下卦
-            tiWuXing: benTi.wuxing,
-            upperWuXing: meihuaResult.huGua.upper.wuxing,
-            lowerWuXing: meihuaResult.huGua.lower.wuxing
-        },
-        bian: {
-            ti: benTi, // 继承本卦体
-            upper: meihuaResult.bianGua.upper, // 变卦上卦
-            lower: meihuaResult.bianGua.lower, // 变卦下卦
-            tiWuXing: benTi.wuxing,
-            upperWuXing: meihuaResult.bianGua.upper.wuxing,
-            lowerWuXing: meihuaResult.bianGua.lower.wuxing
-        },
-        cuo: {
-            ti: benTi, // 继承本卦体（错卦不判用）
-            tiWuXing: benTi.wuxing
-        },
-        zong: {
-            ti: benTi, // 继承本卦体（综卦不判用）
-            tiWuXing: benTi.wuxing
-        }
-    };
-
-    // 2. 爻线渲染函数（保留原有正确逻辑）
-    function createYaoLines(sixYao, changeYao = null) {
-        let html = '';
-        const validChangeYao = (typeof changeYao === 'number' && changeYao >= 1 && changeYao <= 6) ? changeYao : null;
-        sixYao.slice().reverse().forEach((yao, index) => {
-            const yaoIndex = 6 - index;
-            const isBian = validChangeYao && yaoIndex === validChangeYao;
-            html += `<span class="yao ${yao === 1 ? 'yao-yang' : 'yao-yin'} ${isBian ? 'yao-bian' : ''}"></span>`;
-        });
-        return html;
+const guaDataMap = {
+    ben: {
+        name: upperLowerTo64Gua[benCombine] || benCombine, // 自动转标准卦名
+        baguaName: benCombine,
+        sixYao: meihuaResult.benGua.sixYao,
+        changeYao: meihuaResult.change
+    },
+    hu: {
+        name: upperLowerTo64Gua[huCombine] || huCombine,
+        baguaName: huCombine,
+        sixYao: meihuaResult.huGua.sixYao
+    },
+    bian: {
+        name: upperLowerTo64Gua[bianCombine] || bianCombine,
+        baguaName: bianCombine,
+        sixYao: meihuaResult.bianGua.sixYao
+    },
+    cuo: {
+        name: upperLowerTo64Gua[cuoCombine] || cuoCombine,
+        baguaName: cuoCombine,
+        sixYao: meihuaResult.cuoGua.sixYao
+    },
+    zong: {
+        name: upperLowerTo64Gua[zongCombine] || zongCombine,
+        baguaName: zongCombine,
+        sixYao: meihuaResult.zongGua.sixYao
     }
+};
 
+// ========== 核心重构：体用唯本卦定（删除错误的各卦自定体用） ==========
+const benTi = meihuaResult.tiGua; // 本卦体（所有卦的唯一体基准）
+const benYong = meihuaResult.yongGua; // 本卦用（仅本卦专属）
+const guaTiYongMap = {
+    ben: {
+        ti: benTi,
+        yong: benYong,
+        tiWuXing: benTi.wuxing,
+        yongWuXing: benYong.wuxing
+    },
+    hu: {
+        ti: benTi, // 继承本卦体
+        upper: meihuaResult.huGua.upper, // 互卦上卦
+        lower: meihuaResult.huGua.lower, // 互卦下卦
+        tiWuXing: benTi.wuxing,
+        upperWuXing: meihuaResult.huGua.upper.wuxing,
+        lowerWuXing: meihuaResult.huGua.lower.wuxing
+    },
+    bian: {
+        ti: benTi, // 继承本卦体
+        upper: meihuaResult.bianGua.upper, // 变卦上卦
+        lower: meihuaResult.bianGua.lower, // 变卦下卦
+        tiWuXing: benTi.wuxing,
+        upperWuXing: meihuaResult.bianGua.upper.wuxing,
+        lowerWuXing: meihuaResult.bianGua.lower.wuxing
+    },
+    cuo: {
+        ti: benTi, // 继承本卦体（错卦不判用）
+        tiWuXing: benTi.wuxing
+    },
+    zong: {
+        ti: benTi, // 继承本卦体（综卦不判用）
+        tiWuXing: benTi.wuxing
+    }
+};
+
+// 2. 爻线渲染函数（保留原有正确逻辑）
+function createYaoLines(sixYao, changeYao = null) {
+    let html = '';
+    const validChangeYao = (typeof changeYao === 'number' && changeYao >= 1 && changeYao <= 6) ? changeYao : null;
+    sixYao.slice().reverse().forEach((yao, index) => {
+        const yaoIndex = 6 - index;
+        const isBian = validChangeYao && yaoIndex === validChangeYao;
+        html += `<span class="yao ${yao === 1 ? 'yao-yang' : 'yao-yin'} ${isBian ? 'yao-bian' : ''}"></span>`;
+    });
+    return html;
+}
     // 3. 批量填充卦名、八卦名、爻线 + 五行生克（核心修复体用显示）
     Object.keys(guaDataMap).forEach(type => {
         const data = guaDataMap[type];
@@ -6221,6 +6391,7 @@ r.question.includes(keyword) ||
 r.mode.includes(keyword) || 
 r.lunarText.includes(keyword)
 );
+
 // 渲染列表
 els.recordListContainer.innerHTML = filtered.map(record => `
 <div class="record-item ${state.selectedRecords.includes(record.id) ? 'selected' : ''}" data-id="${record.id}">
@@ -6232,7 +6403,7 @@ els.recordListContainer.innerHTML = filtered.map(record => `
 <span class="record-type">
 ${record.startMode === 'time' 
 ? '时间起课' 
-: `数字起课${record.mode === 'guigu' && record.inputNumber ? '（' + record.inputNumber + '）' : ''}`}
+: `数字起课${record.inputNumber ? '（' + record.inputNumber + '）' : ''}`}
 </span>
 <div class="record-remark-show">${record.remark || ''}</div>
 </div>
